@@ -1,0 +1,173 @@
+This README file contains information on building the bpp3 BSP layer.
+
+what software is needed for building the eldk?
+Look here:
+http://www.yoctoproject.org/docs/current/yocto-project-qs/yocto-project-qs.html
+
+# checkout
+cd /software/bpp3/system/poky
+git clone -b danny git://git.yoctoproject.org/poky.git
+cd poky
+git submodule add ...
+
+# initial setup
+sudo mkdir /opt/poky
+sudo chmod 777 /opt/poky
+
+source oe-init-build-env /opt/poky/bpp3
+
+BBLAYERS ?= " \
+  /software/bpp3/system/poky/meta \
+  /software/bpp3/system/poky/meta-yocto \
+  /software/bpp3/system/poky/meta-yocto-bsp \
++  /software/bpp3/system/poky.meta-bpp3 \
+
+
+---------------------------------------------------------------------------
+- Edit "conf/local.conf" as needed; append "add_machine_symlinks" to the USER_CLASSES variable
+
+--- conf/local.conf     2012-09-18 08:24:46.839921454 +0200
++++ conf/local.conf.ORIG        2012-09-18 08:22:51.096590308 +0200
+@@ -26,8 +26,6 @@
+ #
+ # For a quad-core machine, BB_NUMBER_THREADS = "4", PARALLEL_MAKE = "-j 4" would
+ # be appropriate for example.
+-BB_NUMBER_THREADS = "4"
+-PARALLEL_MAKE = "-j 4"
+
+ #
+ # Machine Selection
+@@ -64,7 +62,6 @@
+ # The default is a downloads directory under TOPDIR which is the build directory.
+ #
+ #DL_DIR ?= "${TOPDIR}/downloads"
+-DL_DIR ?= "/home/hs/data/Entwicklung/eldk-downloads"
+
+ #
+ # Where to place shared-state files
+@@ -102,7 +99,7 @@
+ # Ultimately when creating custom policy, people will likely end up subclassing
+ # these defaults.
+ #
+-DISTRO ?= "eldk"
++DISTRO ?= "poky"
+ # As an example of a subclass there is a "bleeding" edge policy configuration
+ # where many versions are set to the absolute latest code from the upstream
+ # source control systems. This is just mentioned here as an example, its not
+@@ -121,7 +118,7 @@
+ #  - 'package_rpm' for rpm style packages
+ # E.g.: PACKAGE_CLASSES ?= "package_rpm package_deb package_ipk"
+ # We default to rpm:
+-PACKAGE_CLASSES ?= "package_ipk"
++PACKAGE_CLASSES ?= "package_rpm"
+
+ #
+ # SDK/ADT target architecture
+@@ -131,7 +128,6 @@
+ # running the build on (i.e. building i686 packages on an x86_64 host._
+ # Supported values are i686 and x86_64
+ #SDKMACHINE ?= "i686"
+-SDKMACHINE ?= "i686"
+
+ #
+ # Extra image configuration defaults
+@@ -166,7 +162,7 @@
+ #   - 'image-swab' to perform host system intrusion detection
+ # NOTE: if listing mklibs & prelink both, then make sure mklibs is before prelink
+ # NOTE: mklibs also needs to be explicitly enabled for a given image, see local.conf.extended
+-USER_CLASSES ?= "buildstats image-mklibs image-prelink add_machine_symlinks"
++USER_CLASSES ?= "buildstats image-mklibs image-prelink"
+
+ #
+ # Runtime testing of images
+---------------------------------------------------------------------------
+- to get the ramdisk created, use this patch for your local.conf file,
+  or edit "conf/local.conf"
+
+--- conf/local.conf	2012-09-25 13:15:16.730165735 +0200
++++ conf/local.conf.orig	2012-09-25 13:11:01.893206208 +0200
+@@ -168,6 +168,12 @@
+ # NOTE: mklibs also needs to be explicitly enabled for a given image, see local.conf.extended
+ USER_CLASSES ?= "buildstats image-mklibs image-prelink add_machine_symlinks"
+
++# Additional image generation features
++#
++# The following is a list of classes to import to use in the generation of images
++# currently an example class is image_types_uboot
++IMAGE_CLASSES = " image_types_uboot"
++
+ #
+ # Runtime testing of images
+ #
+
+---------------------------------------------------------------------------
+adapt
+
+meta-eldk/tools/set-path
+
+bitbake -g bpp3
+
+and source it:
+
+source meta-eldk/tools/set-path
+
+start building with:
+
+MACHINE=bpp3 bitbake swupdate-bpp3
+MACHINE=bpp3 bitbake qt-work
+
+
+remark:
+- Linux must be build with CONFIG_BLK_DEV_RAM, else
+  the ramdisk swupdate-bpp3 would not work. The eldk build process
+  uses the defconfig found in.
+
+  meta-bpp3/recipes-kernel/linux/linux-bpp3/bpp3/defconfig
+
+---------------------------------------------------------------------------
+Images found in ~/eldk-build/${BUILD_NAME}-armv7a/tmp/deploy/images
+looks like:
+
+# ls -al ~/eldk-build/${BUILD_NAME}-armv7a/tmp/deploy/images
+-rw-r--r-- 1 hs users  5533421 25. Sep 11:43 modules-3.5.0-rc2-r1-bpp3.tgz
+-rw-r--r-- 1 hs users 27915831 25. Sep 13:57 qt-work-bpp3-20120925115440.rootfs.tar.gz
+lrwxrwxrwx 1 hs users       41 25. Sep 13:57 qt-work-bpp3.tar.gz -> qt-work-bpp3-20120925115440.rootfs.tar.gz
+-rw-r--r-- 1 hs users      294 25. Sep 13:54 README_-_DO_NOT_DELETE_FILES_IN_THIS_DIRECTORY.txt
+-rw-r--r-- 1 hs users  2606887 25. Sep 13:52 swupdate-bpp3-bpp3-20120925115108.rootfs.ext2.gz.u-boot
+-rw-r--r-- 1 hs users  2567800 25. Sep 13:52 swupdate-bpp3-bpp3-20120925115108.rootfs.tar.gz
+lrwxrwxrwx 1 hs users       55 25. Sep 13:52 swupdate-bpp3-bpp3.ext2.gz.u-boot -> swupdate-bpp3-bpp3-20120925115108.rootfs.ext2.gz.u-boot
+lrwxrwxrwx 1 hs users       47 25. Sep 13:52 swupdate-bpp3-bpp3.tar.gz -> swupdate-bpp3-bpp3-20120925115108.rootfs.tar.gz
+-rw-r--r-- 1 hs users  2924360 25. Sep 11:43 uImage-3.5-r1-bpp3-20120925084821.bin
+lrwxrwxrwx 1 hs users       37 25. Sep 11:43 uImage-bpp3.bin -> uImage-3.5-r1-bpp3-20120925084821.bin
+
+modules-3.5.0-rc2-r1-bpp3.tgz:     linux kernel modules for the qt-work rootfs
+qt-work-bpp3.tar.gz:               qt-work rootfs
+swupdate-bpp3-bpp3.ext2.gz.u-boot: ramdisk for Software update
+uImage-bpp3.bin:                   Kernel Image
+
+---------------------------------------------------------------------------
+The script, which starts the Software update is found in:
+
+  Images found in
+  ./meta-bpp3/recipes-bpp3/recipes-core/initscripts-swupdate/rcS.swupdate
+
+---------------------------------------------------------------------------
+
+If you want to change linux kernel config make:
+
+MACHINE=bpp3 bitbake -c menuconfig linux-bpp3
+
+edit  and save your changes somewhere and overwrite
+
+meta-bpp3/recipes-kernel/linux/linux-bpp3/bpp3/defconfig
+
+rebuild qt-work rootfs:
+
+MACHINE=bpp3 bitbake -c cleansstate linux-bpp3
+MACHINE=bpp3 bitbake qt-work
+
+
+----------------------------------------------------------------------------
+cd /home/jeroen/bpp3/system/eldk/ && source meta-eldk/tools/set-path && MACHINE=bpp3 && source oe-init-build-env /opt/eldk/build/bpp3-armv7a/
+
+MACHINE=bpp3 bitbake qt-work
