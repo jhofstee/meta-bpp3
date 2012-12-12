@@ -1,0 +1,13 @@
+diff --git a/tools/env/fw_env.c b/tools/env/fw_env.c
+index e292d2b..2bb061a 100644
+--- a/tools/env/fw_env.c
++++ b/tools/env/fw_env.c
+@@ -45,8 +45,6 @@
+
+ #include "fw_env.h"
+
+-#include <config.h>
+-
+ #define WHITESPACE(c) ((c == '\t') || (c == ' '))
+
+ #define min(x, y) ({				\
