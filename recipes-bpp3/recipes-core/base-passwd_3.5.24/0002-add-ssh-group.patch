@@ -1,0 +1,9 @@
+Index: base-passwd/group.master
+===================================================================
+--- base-passwd.orig/group.master	2008-08-19 12:21:53.000000000 +0200
++++ base-passwd/group.master	2012-07-19 12:11:59.263475695 +0200
+@@ -37,3 +37,4 @@
+ games:*:60:
+ users:*:100:
+ nogroup:*:65534:
++sshd:*:996:

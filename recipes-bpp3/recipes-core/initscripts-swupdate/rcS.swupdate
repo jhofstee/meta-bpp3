@@ -1,0 +1,62 @@
+#!/bin/sh
+
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+MMC=/media/card
+
+umask 022
+mount -t proc proc /proc
+mount sysfs /sys -t sysfs
+if [ -e /proc/cpu/alignment ]; then
+   echo "3" > /proc/cpu/alignment
+fi
+mount tmpfs -t tmpfs $TMPDIR -o,size=40k
+
+echo "7" > /proc/sys/kernel/printk
+
+echo "Checking for rootFS Image"
+echo "---------------------------------"
+echo "  "
+
+mount /dev/mmcblck0p1 ${MMC}
+
+found=0
+
+if [ -f ${MMC}/qt-work-bpp3.tar.gz ];then
+	found=1
+	break
+fi
+
+console=`cat /sys/class/tty/console/active`
+if [ $found == 0 ];then
+	echo "No Image found....exiting !"
+
+#	if [ x$console != "xttyO0" ];then
+#		while [ 1 ]; do
+#			echo "Please reboot the system !"
+#			sleep 90
+#			reboot -d -f
+#		done
+#	fi
+
+	exit 1
+fi
+
+echo "Starting rootFS Update"
+# Do here what todo
+ubiformat -q /dev/mtd8
+ubiattach /dev/ubi_ctrl -m 8
+ubimkvol /dev/ubi0 -N rootfs -m
+mount -t ubifs /dev/ubi0_0 ${MMC}
+cd ${MMC}
+tar zxf ${MMC}/qt-work-bpp3.tar.gz
+tar zxf ${MMC}/modules-3.5.0-rc2-r1-bpp3.tgz
+umount ${MMC}
+
+if [ x$console != "xttyO0" ];then
+	while [ 1 ]; do
+		echo "Please reboot the system !"
+		sleep 90
+		reboot
+	done
+fi
+exit 0
