@@ -8,6 +8,5 @@ BBFILES ?= ""
 BBLAYERS ?= " \
   /software/bpp3/system/poky/meta \
   /software/bpp3/system/poky/meta-yocto \
-  /software/bpp3/system/poky/meta-yocto-bsp \
   /software/bpp3/system/poky/meta-bpp3 \
   "

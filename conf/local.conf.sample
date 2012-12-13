@@ -28,7 +28,7 @@ PARALLEL_MAKE = "-j 11"
 # be appropriate for example.
 
 # This sets the default machine if no other machine is selected:
-MACHINE ??= "bpp3"
+MACHINE ?= "bpp3"
 
 #
 # Where to place downloads
