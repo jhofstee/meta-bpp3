@@ -13,6 +13,7 @@ SRC_URI = "file://rcS.swupdate \
 	"
 
 IMAGE_INSTALL = "base-files \
+		base-passwd \
 		busybox \
 		mtd-utils \
 		tinylogin \
