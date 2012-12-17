@@ -36,10 +36,10 @@ PARALLEL_MAKE = "-j 4"
 ---------------------------------------------------------------------------
 
 # build a root filesystem to update the bpp3
-bpp3 bitbake bpp3-update
+bitbake bpp3-update
 
 # build the binaries for the target (no headers etc)
-bpp3 bitbake bpp3-rootfs
+bitbake bpp3-rootfs
 
 # build the SDK with the bpp3 packeges (including headers and cross compiler)
 bitbake meta-toolchain-qte
