@@ -85,5 +85,7 @@ meta-bpp3/recipes-kernel/linux/linux-bpp3/bpp3/defconfig
 
 # And rebuild rootfs:
 bitbake -c cleansstate linux-bpp3
-bpp3 bitbake bpp3-rootfs
+bitbake bpp3-rootfs
+
+---------------------------------------------------------------------------
 
