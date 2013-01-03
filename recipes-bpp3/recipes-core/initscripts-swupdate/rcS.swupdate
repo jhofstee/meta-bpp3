@@ -1,62 +1,97 @@
 #!/bin/sh
 
 PATH=/sbin:/bin:/usr/sbin:/usr/bin
-MMC=/media/card
 
 umask 022
+
 mount -t proc proc /proc
 mount sysfs /sys -t sysfs
 if [ -e /proc/cpu/alignment ]; then
-   echo "3" > /proc/cpu/alignment
+	echo "3" > /proc/cpu/alignment
 fi
 mount tmpfs -t tmpfs $TMPDIR -o,size=40k
 
 echo "7" > /proc/sys/kernel/printk
 
+mknod -m 666 /dev/sda b 8 0
+mknod -m 666 /dev/sda1 b 8 1
+
+## update part ##
+kernel_mtd=7
+rootfs_nr=9
+rootfs_mtd=/dev/mtd$rootfs_nr
+
+SRC=/media/card
+SRC_DEV=/dev/sda1
+FLASH=/mnt/flash
+
+do_exit()
+{
+	cd /
+	umount $SRC
+	umount $FLASH
+	ubidetach /dev/ubi_ctrl -m $rootfs_nr
+	exit $1
+}
+
+# check for errors
+check()
+{
+	if [ "${1}" -ne "0" ]; then
+		echo "ERROR # ${1}"
+		do_exit 1
+	fi
+}
+
 echo "Checking for rootFS Image"
-echo "---------------------------------"
-echo "  "
 
-mount /dev/mmcblck0p1 ${MMC}
+while [ 1 ]; do
+	mount $SRC_DEV $SRC
+	if [ $? -eq 0 ]; then
+		break
+	fi
+	echo .
+	sleep 1
+done
 
-found=0
+rootfs_img=$SRC/bpp3-rootfs.tgz
 
-if [ -f ${MMC}/qt-work-bpp3.tar.gz ];then
-	found=1
-	break
-fi
-
-console=`cat /sys/class/tty/console/active`
-if [ $found == 0 ];then
+if [ ! -f $rootfs_img ]; then
 	echo "No Image found....exiting !"
-
-#	if [ x$console != "xttyO0" ];then
-#		while [ 1 ]; do
-#			echo "Please reboot the system !"
-#			sleep 90
-#			reboot -d -f
-#		done
-#	fi
-
-	exit 1
+	check 1
 fi
 
-echo "Starting rootFS Update"
-# Do here what todo
-ubiformat -q /dev/mtd8
-ubiattach /dev/ubi_ctrl -m 8
-ubimkvol /dev/ubi0 -N rootfs -m
-mount -t ubifs /dev/ubi0_0 ${MMC}
-cd ${MMC}
-tar zxf ${MMC}/qt-work-bpp3.tar.gz
-tar zxf ${MMC}/modules-3.5.0-rc2-r1-bpp3.tgz
-umount ${MMC}
+echo "Formatting $rootfs_mtd"
+ubiformat -qy $rootfs_mtd
+check $?
 
-if [ x$console != "xttyO0" ];then
-	while [ 1 ]; do
-		echo "Please reboot the system !"
-		sleep 90
-		reboot
-	done
+echo "Attaching to $rootfs_mtd"
+ubiattach /dev/ubi_ctrl -m $rootfs_nr
+check $?
+
+echo "Mkvol ubi0"
+ubimkvol /dev/ubi0 -N container -m
+check $?
+
+echo "Mounting flash rootfs"
+if [ ! -d ${FLASH} ]; then
+	mkdir -p ${FLASH}
 fi
-exit 0
+mount -t ubifs /dev/ubi0_0 ${FLASH}
+check $?
+
+cd $FLASH
+echo "Extracting files"
+tar zxvf $rootfs_img
+check $?
+
+flash_erase /dev/mtd$kernel_mtd 0 0
+# cat / dd and friends complain about:
+# nand_do_write_ops: attempt to write non page aligned data
+# therefor use nandwrite with the padding option enabled
+nandwrite -p /dev/mtd$kernel_mtd /media/card/uImage
+
+# TODO
+#tar zxf ${MMC}/modules-3.5.0-rc2-r1-bpp3.tgz
+
+do_exit 0
