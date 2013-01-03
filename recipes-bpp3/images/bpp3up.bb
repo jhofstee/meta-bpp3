@@ -9,17 +9,18 @@ DESCRIPTION = "Root FS includes the following functionality: 				\
 		"
 
 
-SRC_URI = "file://rcS.swupdate \
-	"
+SRC_URI = "file://rcS.swupdate"
 
-IMAGE_INSTALL = "base-files \
-		base-passwd \
-		busybox \
-		mtd-utils \
-		tinylogin \
-		sysvinit \
-		initscripts-swupdate \
-		 "
+IMAGE_INSTALL = " \
+	base-files \
+	base-passwd \
+	busybox \
+	initscripts-swupdate \
+	mtd-utils \
+	tinylogin \
+	sysvinit \
+	u-boot-env-tools \
+	 "
 
 LIC_FILES_CHKSUM = "file://${COREBASE}/LICENSE;md5=3f40d7994397109285ec7b81fdeb3b58 \
                     file://${COREBASE}/meta/COPYING.MIT;md5=3da9cfbcb788c80a0384361b4de20420 \
@@ -34,6 +35,8 @@ PR="r1"
 IMAGE_CLASSES += " image_types_uboot"
 
 IMAGE_FSTYPES = "ext2.gz.u-boot"
+#IMAGE_FSTYPES = "tar.gz"
+
 IMAGE_DEVICE_TABLE="${COREBASE}/meta-bpp3/recipes-bpp3/files/device_table.txt"
 IMAGE_ROOTFS_SIZE = "16384"
 
