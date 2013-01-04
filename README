@@ -36,7 +36,7 @@ PARALLEL_MAKE = "-j 4"
 ---------------------------------------------------------------------------
 
 # build a root filesystem to update the bpp3
-bitbake bpp3-update
+bitbake bpp3up
 
 # build the binaries for the target (no headers etc)
 bitbake bpp3-rootfs
