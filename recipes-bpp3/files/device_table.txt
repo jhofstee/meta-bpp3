@@ -31,7 +31,7 @@
 /dev/ubi0_	c	660	0	6	251	1	0	1	10
 /dev/ubi1	c	660	0	6	252	0	-	-	-
 /dev/ubi1_	c	660	0	6	252	1	0	1	10
-/dev/ubi_ctrl	c	660	0	6	10	63	-	-	-
+/dev/ubi_ctrl	c	660	0	6	10	60	-	-	-
 /dev/console	c	662	0	5	5	1	-	-	-
 /dev/rtc0	c	644	0	5	254	0	-	-	-
 /dev/random	c	644	0	0	1	8	-	-	-
