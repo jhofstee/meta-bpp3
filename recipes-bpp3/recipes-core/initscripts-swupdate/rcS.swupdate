@@ -13,9 +13,6 @@ mount tmpfs -t tmpfs $TMPDIR -o,size=40k
 
 echo "7" > /proc/sys/kernel/printk
 
-mknod -m 666 /dev/sda b 8 0
-mknod -m 666 /dev/sda1 b 8 1
-
 ## update part ##
 kernel_mtd=7
 rootfs_nr=9
