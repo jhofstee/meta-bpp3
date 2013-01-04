@@ -20,6 +20,7 @@ rootfs_mtd=/dev/mtd$rootfs_nr
 
 SRC=/media/card
 SRC_DEV=/dev/sda1
+SRC_DEV2=/dev/mmcblk0p1
 FLASH=/mnt/flash
 
 do_exit()
@@ -45,6 +46,12 @@ echo "Checking for rootFS Image"
 while [ 1 ]; do
 	mount $SRC_DEV $SRC
 	if [ $? -eq 0 ]; then
+		echo "using usb"
+		break
+	fi
+	mount $SRC_DEV2 $SRC
+	if [ $? -eq 0 ]; then
+		echo "using sd card"
 		break
 	fi
 	echo .
