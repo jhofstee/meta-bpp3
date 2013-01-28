@@ -42,10 +42,10 @@ RDEPENDS_packagegroup-custom-image-bpp3 = "\
 	python-threading \
 	python-xml \
 	python-zlib \
+	rpcbind \
 	screen \
 	strace \
 	u-boot-env-tools \
-	util-linux \
 	zip \
 	libqt-embeddedcore4 \
 	libqt-embeddeddbus4 \
@@ -60,3 +60,11 @@ RDEPENDS_packagegroup-custom-image-bpp3 = "\
 	qt4-embedded-plugin-imageformat-tiff \
 	qt4-embedded-qmlviewer \
 "
+
+# util-linux include a lot of commands already provided by busybox.
+# Since the busy box mount can mount nfs (with portmap or -nolock)
+# remove util-linux for now, to make busybox the default. Mount of
+# util-linux might work with nfs-utils.
+
+# util-linux
+# nfs-utils

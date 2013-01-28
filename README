@@ -16,6 +16,7 @@ cd /software/bpp3/system/poky
 git clone -b danny git://git.yoctoproject.org/poky.git
 cd poky
 git clone git@github.com:jhofstee/meta-bpp3.git
+git clone git://git.openembedded.org/meta-openembedded-contrib
 
 # initial setup
 sudo mkdir /opt/poky
