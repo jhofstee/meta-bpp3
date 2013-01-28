@@ -23,6 +23,8 @@ RDEPENDS_packagegroup-custom-image-bpp3 = "\
 	libsegfault \
 	mtd-utils \
 	nano \
+	ntp-utils \
+	ntpdate \
 	openssh \
 	openssh-sftp-server \
 	ppp \
