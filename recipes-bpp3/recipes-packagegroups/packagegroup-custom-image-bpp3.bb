@@ -39,6 +39,7 @@ RDEPENDS_packagegroup-custom-image-bpp3 = "\
 	python-logging \
 	python-math \
 	python-netclient \
+	python-pprint \
 	python-stringold \
 	python-subprocess \
 	python-threading \
