@@ -1,0 +1,11 @@
+auto lo
+iface lo inet loopback
+
+auto eth0
+iface eth0 inet dhcp
+
+auto can0
+iface can0 inet manual
+	pre-up ip link set $IFACE type can bitrate 250000 restart-ms 100
+	up /sbin/ifconfig $IFACE up
+	down /sbin/ifconfig $IFACE down
