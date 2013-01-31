@@ -37,6 +37,7 @@ RDEPENDS_packagegroup-custom-image-bpp3 = "\
 	python-pygobject \
 	python-io \
 	python-logging \
+	python-lxml \
 	python-math \
 	python-netclient \
 	python-pprint \
