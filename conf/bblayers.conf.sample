@@ -9,4 +9,5 @@ BBLAYERS ?= " \
   /software/bpp3/system/poky/meta \
   /software/bpp3/system/poky/meta-yocto \
   /software/bpp3/system/poky/meta-bpp3 \
+  /software/bpp3/system/poky/meta-openembedded-contrib/meta-networking \
   "
