@@ -13,7 +13,7 @@ http://www.yoctoproject.org/docs/current/yocto-project-qs/yocto-project-qs.html
 # checkout
 mkdir -p /software/bpp3/system/poky
 cd /software/bpp3/system/poky
-git clone -b danny git://git.yoctoproject.org/poky.git
+git clone -b danny_bpp3 git@github.com:jhofstee/eldk.git poky
 cd poky
 git clone git@github.com:jhofstee/meta-bpp3.git
 git clone git://git.openembedded.org/meta-openembedded-contrib
@@ -42,7 +42,7 @@ bitbake bpp3up
 # build the binaries for the target (no headers etc)
 bitbake bpp3-rootfs
 
-# build the SDK with the bpp3 packeges (including headers and cross compiler)
+# build the SDK with the bpp3 packages (including headers and cross compiler)
 bitbake meta-toolchain-qte
 
 # dependencies can be inspected with
@@ -70,19 +70,10 @@ The script, which starts the software update is found in:
   Images found in
   ./meta-bpp3/recipes-bpp3/recipes-core/initscripts-swupdate/rcS.swupdate
 
-remark:
-- Linux must be build with CONFIG_BLK_DEV_RAM, else the ramdisk would not 
-  work. The build process uses the defconfig found in.
-
-  meta-bpp3/recipes-kernel/linux/linux-bpp3/bpp3/defconfig
-
 ---------------------------------------------------------------------------
 
 # If you want to change linux kernel config:
 bitbake -c menuconfig linux-bpp3
-
-# Edit and save your changes somewhere and overwrite
-meta-bpp3/recipes-kernel/linux/linux-bpp3/bpp3/defconfig
 
 # And rebuild rootfs:
 bitbake -c cleansstate linux-bpp3
